@@ -1,9 +1,12 @@
 import logger
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 from sklearn_pandas import DataFrameMapper
 from sklearn.preprocessing import OrdinalEncoder
 
 
-class EncodeFeatures:
+class ModelPreprocessing:
 
     @staticmethod
     def fit_cat_encoder(data):
@@ -80,5 +83,69 @@ class EncodeFeatures:
             return encoder
 
         except Exception as x:
+            print('Error in fitting categorical encoder. Check logs.')
             logger.logging.exception('Error while fitting categorical encoder: ' + str(x))
             return None
+
+    @staticmethod
+    def plot_feature_importance(features_list, fitted_model, algo_name='Tree Based Model', plot_size=(20, 30), font_scale=2):
+        """
+        This functions accepts list of features, fitted model, algorithm used to fit the model and plot size and draws a plot of feature importance for tree based algorithms
+
+        Parameter
+        features_list: list - A list of feature names
+        fitted_model: Fitted model for which features importance plot is to be plotted
+        algo_name: str - Name of the algorith used to train/fit the model
+        plot_size: (x, y) - Dimension of the resultant plot
+        font_scale: int, default 2 - To adjust font size in the plot
+        """
+
+        try:
+            # Calculating feature importance
+            feature_imp = pd.DataFrame({'feature_name': features_list, 'feature_importance': fitted_model.feature_importances_})
+            feature_imp.sort_values(by='feature_importance', ascending=False, inplace=True)
+
+            # Plotting feature importance plot
+            plt.figure(figsize=plot_size)
+            sns.set(font_scale=font_scale)
+            sns.barplot(x=feature_imp['feature_importance'], y=feature_imp['feature_name'])
+            plt.xlabel('Feature Importance')
+            plt.ylabel('Feature')
+            plt.title(algo_name + "'s Feature Importance")
+            plt.show()
+
+            logger.logging.info('Feature Importance plot plotted successfully.')
+
+        except Exception as x:
+            print('Error in plotting feature importance plot. Check logs.')
+            logger.logging.exception('Error in plotting plot for feature importance:' + str(x))
+
+    @staticmethod
+    def remove_insignificant_feature(data, fitted_model, threshold):
+        """
+        This function accepts dataframe used to train the model, fitted model, threshold value of feature importance.
+        The function removes feature from the dataframe with less importance than the threshold and returns that dataframe.
+
+        Parameter
+        data: df - data used for training the model
+        fitted_model: fitted model for which insignificant feature need to be removed
+        threshold: float - threshold value to filter features
+        """
+
+        try:
+            data_frame = pd.DataFrame({'feature': list(data), 'Feature_imp': fitted_model.feature_importances_})
+
+            # feature imp less than threshold value
+            feat = []
+            for row in range(data_frame.shape[0]):
+                if data_frame.iloc[row, 1] < threshold:
+                    feat.append(data_frame.iloc[row, 0])
+
+            data_significant_feat = data.drop(feat, axis=1)
+
+            logger.logging.info('Insignificant featured removed successfully.')
+            return data_significant_feat
+
+        except Exception as x:
+            print('Error while removing insignificant feature from data. Check logs.')
+            logger.logging.exception('Error while removing insignificant features:' + str(x))
