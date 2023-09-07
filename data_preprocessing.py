@@ -63,22 +63,3 @@ class PreProcessingData:
 
         except Exception as x:
             logger.logging.exception('Error in calculating missing value count or percentage of the DF: ' + str(x))
-
-    @staticmethod
-    def int_to_cat(dataframe, feature_list):
-        """
-        This function converts the data type of features from int or float to categorical.
-
-        Parameter
-        DF: DataFrame
-        feature_list: Name of features to convert its data type as a list
-        """
-        try:
-            for col in feature_list:
-                dataframe[col] = dataframe[col].astype('category', copy=False)
-
-            logger.logging.info('Data type changed successfully to categorical for {0}.'.format(feature_list))
-            del col, feature_list
-
-        except Exception as x:
-            logger.logging.exception('Error in changing data type: ' + str(x))

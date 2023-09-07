@@ -149,3 +149,94 @@ class ModelPreprocessing:
         except Exception as x:
             print('Error while removing insignificant feature from data. Check logs.')
             logger.logging.exception('Error while removing insignificant features:' + str(x))
+
+    @staticmethod
+    def continuous_features_to_bins(data, continuous_features):
+        """
+        This function accepts the dataframe and transforms the continuous features into different bins ranges and return the modified dataframe.
+
+        Parameter
+        data: df - original dataframe
+        continuous_feature: list - list of continuous features which needs to be transformed
+        """
+
+        try:
+            for features in continuous_features:
+
+                if features == 'LotFrontage':
+                    data['LotFrontage'] = pd.cut(x=data['LotFrontage'], bins=range(20, 321, 10), labels=range(0, 30))
+
+                elif features == 'LotArea':
+                    data['LotArea'] = pd.cut(x=data['LotArea'], bins=range(1000, 215501, 500), labels=range(0, 429))
+
+                elif features == 'YearBuilt':
+                    data['YearBuilt'] = pd.cut(x=data['YearBuilt'], bins=range(1870, 2011, 5), labels=range(0, 28))
+
+                elif features == 'YearRemodAdd':
+                    data['YearRemodAdd'] = pd.cut(x=data['YearRemodAdd'], bins=range(1950, 2016, 5), right=False, labels=range(0, 13))
+
+                elif features == 'MasVnrArea':
+                    data['MasVnrArea'] = pd.cut(x=data['MasVnrArea'], bins=range(0, 1651, 50), right=False, labels=range(0, 33))
+
+                elif features == 'BsmtFinSF1':
+                    data['BsmtFinSF1'] = pd.cut(x=data['BsmtFinSF1'], bins=range(0, 6001, 500), right=False, labels=range(0, 12))
+
+                elif features == 'BsmtFinSF2':
+                    data['BsmtFinSF2'] = pd.cut(x=data['BsmtFinSF2'], bins=range(0, 1601, 50), right=False, labels=range(0, 32))
+
+                elif features == 'BsmtUnfSF':
+                    data['BsmtUnfSF'] = pd.cut(x=data['BsmtUnfSF'], bins=range(0, 2501, 50), right=False, labels=range(0, 50))
+
+                elif features == 'TotalBsmtSF':
+                    data['TotalBsmtSF'] = pd.cut(x=data['TotalBsmtSF'], bins=range(0, 6501, 250), right=False, labels=range(0, 26))
+
+                elif features == '1stFlrSF':
+                    data['1stFlrSF'] = pd.cut(x=data['1stFlrSF'], bins=range(250, 5501, 250), labels=range(0, 21))
+
+                elif features == '2ndFlrSF':
+                    data['2ndFlrSF'] = pd.cut(x=data['2ndFlrSF'], bins=range(0, 2201, 50), right=False, labels=range(0, 44))
+
+                elif features == 'LowQualFinSF':
+                    data['LowQualFinSF'] = pd.cut(x=data['LowQualFinSF'], bins=range(0, 1101, 50), right=False, labels=range(0, 22))
+
+                elif features == 'GrLivArea':
+                    data['GrLivArea'] = pd.cut(x=data['GrLivArea'], bins=range(250, 6001, 250), labels=range(0, 23))
+
+                elif features == 'GarageYrBlt':
+                    data['GarageYrBlt'] = pd.cut(x=data['GarageYrBlt'], bins=range(1900, 2011, 5), labels=range(0, 22))
+                    data['GarageYrBlt'].fillna(0, inplace=True)
+
+                elif features == 'GarageArea':
+                    data['GarageArea'] = pd.cut(x=data['GarageArea'], bins=range(0, 1501, 50), right=False, labels=range(0, 30))
+
+                elif features == 'WoodDeckSF':
+                    data['WoodDeckSF'] = pd.cut(x=data['WoodDeckSF'], bins=range(0, 1501, 50), right=False, labels=range(0, 30))
+
+                elif features == 'OpenPorchSF':
+                    data['OpenPorchSF'] = pd.cut(x=data['OpenPorchSF'], bins=range(0, 801, 50), right=False, labels=range(0, 16))
+
+                elif features == 'EnclosedPorch':
+                    data['EnclosedPorch'] = pd.cut(x=data['EnclosedPorch'], bins=range(0, 1001, 50), right=False, labels=range(0, 20))
+
+                elif features == '3SsnPorch':
+                    data['3SsnPorch'] = pd.cut(x=data['3SsnPorch'], bins=range(0, 601, 50), right=False, labels=range(0, 12))
+
+                elif features == 'ScreenPorch':
+                    data['ScreenPorch'] = pd.cut(x=data['ScreenPorch'], bins=range(0, 601, 50), right=False, labels=range(0, 12))
+
+                elif features == 'PoolArea':
+                    data['PoolArea'] = pd.cut(x=data['PoolArea'], bins=range(0, 1001, 50), right=False, labels=range(0, 20))
+
+                elif features == 'MiscVal':
+                    data['MiscVal'] = pd.cut(x=data['MiscVal'], bins=range(0, 20001, 250), right=False, labels=range(0, 80))
+
+                elif features == 'YrSold':
+                    data['YrSold'] = pd.cut(x=data['YrSold'], bins=range(2005, 2011, 1), labels=range(0, 5))
+
+            logger.logging.info('All the features are transformed into bins.')
+            return data
+
+        except Exception as x:
+            print('Error while transforming the feature. Check logs.')
+            logger.logging.exception('Error while transforming features: ' + str(x))
+            return None
